@@ -2,72 +2,36 @@ import pygame
 from maze_generation import *
 from player import *
 
-WHITE = (255, 255, 255)
-GREY = (200, 200, 200)
-LIGHT_BLUE = (0, 244, 244)
-PINK = (252, 180, 213)
-BROWN = (220, 88, 5)
-YELLOW = (255, 255, 0)
-GOLD = (249, 166, 2)
-DUSTY = (207, 181, 59)
 
-def draw_maze(maze, surface):
-    cell_size = 30
-    color = PINK
-    border_color = (10, 10, 10)
-    padding = 10
+MAZE_HEIGHT = 10
+MAZE_WIDTH = 30
 
-    pygame.draw.rect(surface, border_color, (0, 0, padding, padding))
-    pygame.draw.rect(surface, border_color, (padding, 0, maze.width * (cell_size + padding), padding))
-    pygame.draw.rect(surface, border_color, (0, padding, padding,maze.height * (cell_size + padding)))
-
-    for i in range(maze.height):
-        for j in range(maze.width):
-            cell = maze.grid[i][j]
-            cell_x, cell_y = padding + (padding + cell_size) * j, padding + (padding + cell_size) * i
-            pygame.draw.rect(surface, color, (cell_x, cell_y, cell_size, cell_size))
-
-            if Direction.RIGHT in cell:
-                border_color = color
-            pygame.draw.rect(surface, border_color, (cell_x + cell_size, cell_y, padding, cell_size))
-            border_color = (10, 10, 10)
-
-            if Direction.DOWN in cell:
-                border_color = color
-            pygame.draw.rect(surface, border_color, (cell_x, cell_y + cell_size, cell_size, padding))
-            border_color = (10, 10, 10)
-
-            pygame.draw.rect(surface, border_color, (cell_x + cell_size, cell_y + cell_size, padding, padding))
-
-
-MAZE_HEIGHT = 8
-MAZE_WIDTH = 12
-
+CELL_SIZE = 40
 PADDING = 10
-CELL_SIZE = 30
+
+WALL_COLOR = (10, 10, 10)
 
 WINDOW_HEIGHT = (PADDING + CELL_SIZE) * MAZE_HEIGHT + PADDING  # +PADDING for upper border
 WINDOW_WIDTH = (PADDING + CELL_SIZE) * MAZE_WIDTH + PADDING    # +PADDING for left border
 
+             
 pygame.init()
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-screen.fill(GREY)
+screen.fill(Color.GREY.value)
 running = True
 
-m = Maze(MAZE_HEIGHT, MAZE_WIDTH)
+field = Field(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE, PADDING, MAZE_WIDTH, MAZE_HEIGHT)
+field.draw_maze()
 
-background = screen.copy()
-draw_maze(m, background)
-
-player = Player("semicolon_three.png", 30, 10, 10, 10)
+player = Player("semicolon_three.png", CELL_SIZE, PADDING, PADDING, PADDING)
 p_start_x, p_start_y = 0, 0
 
-screen.blit(background, (0, 0))
+screen.blit(field.surface, (0, 0))
 screen.blit(player.surf, player.rect)
 pygame.display.flip()
 
 while running:
-    cur_cell = m.grid[player.y_pos + p_start_y][player.x_pos + p_start_x]
+    cur_cell = field.maze.grid[player.y_pos + p_start_y][player.x_pos + p_start_x]
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -81,8 +45,8 @@ while running:
             elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 player.move(Direction.RIGHT, cur_cell)
 
-    screen.fill(GREY)
-    screen.blit(background, (0, 0))
+    screen.fill(Color.GREY.value)
+    screen.blit(field.surface, (0, 0))
     screen.blit(player.surf, player.rect)
     pygame.display.flip()
 
