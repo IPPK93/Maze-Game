@@ -4,6 +4,7 @@ from player import *
 from colors import *
 from field import *
 
+FPS = 30
 
 MAZE_H = 10
 MAZE_W = 30
@@ -19,6 +20,7 @@ WIN_W = (PADDING + CELL_SIZE) * MAZE_W + PADDING    # +PADDING for left border
 FLOOR_NUM = 3
              
 pygame.init()
+clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIN_W, WIN_H))
 screen.fill(Color.GREY.value)
 running = True
@@ -54,6 +56,7 @@ while running:
     screen.blit(field.surface, (0, 0))
     screen.blit(field.player.surf, field.player.rect)
     pygame.display.flip()
+    clock.tick(FPS)
 
 pygame.display.quit()
 pygame.quit()
