@@ -22,7 +22,7 @@ FLOOR_NUM = 3
 pygame.init()
 clock = pygame.time.Clock()
 screen = pygame.display.set_mode((WIN_W, WIN_H))
-screen.fill(Color.GREY.value)
+
 running = True
 
 
@@ -32,10 +32,13 @@ field.build_floor((field.player.x_pos, field.player.y_pos))
 print("BUILT")
 field.draw_maze()
 
+def update_board():
+    screen.fill(Color.GREY.value)
+    screen.blit(field.surface, (0, 0))
+    screen.blit(field.player.surf, field.player.rect)
+    pygame.display.flip()
 
-screen.blit(field.surface, (0, 0))
-screen.blit(field.player.surf, field.player.rect)
-pygame.display.flip()
+update_board()
 
 while running:
     cur_cell = field.get_maze().grid[player.y_pos][player.x_pos]
@@ -51,11 +54,8 @@ while running:
                 field.move_player(Direction.LEFT, cur_cell)
             elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 field.move_player(Direction.RIGHT, cur_cell)
-
-    screen.fill(Color.GREY.value)
-    screen.blit(field.surface, (0, 0))
-    screen.blit(field.player.surf, field.player.rect)
-    pygame.display.flip()
+            update_board()
+    
     clock.tick(FPS)
 
 pygame.display.quit()
